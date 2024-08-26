@@ -1,0 +1,28 @@
+import numpy as np
+import pandas as pd
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import train_test_split
+from sklearn import metrics
+
+# Load and prepare data
+df = pd.read_csv("/content/Iris.csv")
+df = df.drop(columns=["Id"])
+df["Species"].replace({"Iris-setosa": 1, "Iris-versicolor": 2, "Iris-virginica": 3}, inplace=True)
+
+# Features and labels
+x = pd.DataFrame(df, columns=["SepalLengthCm", "SepalWidthCm", "PetalLengthCm", "PetalWidthCm"]).values
+y = df.Species.values.reshape(-1, 1)
+
+# Split the data into training and testing sets
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.30, random_state=42)
+
+# K-Nearest Neighbors classifier
+K = 6
+Knclr = KNeighborsClassifier(K)
+Knclr.fit(x_train, y_train)
+
+# Make predictions and evaluate accuracy
+y_pred = Knclr.predict(x_test)
+accuracy = metrics.accuracy_score(y_test, y_pred) * 100
+
+print(f"Accuracy: {accuracy:.2f}%")
